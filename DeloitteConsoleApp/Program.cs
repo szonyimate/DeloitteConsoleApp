@@ -11,24 +11,26 @@ namespace DeloitteConsoleApp
             // List for storing the input
             List<String> listOfValues = new List<string>();
             // The current input line
-            string s;
+            string inputLine;
 
-            // List for the numbers
+            // List containing the numbers
             List<String> numbers = new List<string>();
-            // List for the texts
+            // List containing the texts
             List<String> texts = new List<string>();
-            // List for the dates
+            // List containing the dates
             List<String> dates = new List<string>();
 
+            // 7 valid input required
             while (listOfValues.Count < 7)
             {
                 // Clear the console and wait for the remaining inputs
                 Console.Clear();
-                Console.WriteLine("Enter {0} more values:", (7-listOfValues.Count));
-                // Asks the user of the next value type
+                Console.WriteLine("{0} input required:\n", (7-listOfValues.Count));
+                // Choose the next input type
                 Console.WriteLine("What is the next type? (Number - 1 / String - 2 / Datetime - 3)");
-                s = Console.ReadLine();
-                int i = Int32.Parse(s);
+                inputLine = Console.ReadLine();
+                int inputType = Int32.Parse(inputLine);
+
                 // Value of current number, required for operations
                 int numValue;
                 bool isPrime = false;
@@ -38,41 +40,55 @@ namespace DeloitteConsoleApp
                 string inputDate;
 
 
-                // Calls the methods based on the given valuetype and ands the valid input to the listOfValues list
-                switch (i)
+                // Calls the methods based on the given valuetype and adds the valid input to the listOfValues list and the list of its type
+                switch (inputType)
                 {
+                    // Number input
                     case 1:
-                        numValue = checkNumberValue();
+                        // The return of ValidateNumber() method is the input string converted to int.
+                        numValue = ValidateNumber();
+                        // The input is valid, so it can be added to the list
                         listOfValues.Add(numValue.ToString());
                         
-                        if (isPrime = checkIfNumberIsPrime(numValue))
+                        // Adds a string to the numbers list
+                        if (isPrime = NumberIsPrime(numValue))
                         {
-                            numbers.Add(numValue + " - " + numberOperations(numValue).ToString() + " !prime");
+                            numbers.Add(numValue + " - " + NumberOperations(numValue) + " !prime");
                         }
-                        else numbers.Add(numValue + " - " + numberOperations(numValue).ToString());
+                        else numbers.Add(numValue + " - " + NumberOperations(numValue));
+                        break;
+                    
+                    // Text input
+                    case 2:
+                        inputText = ValidateText();
+                        // The input is valid, so it can be added to the list
+                        listOfValues.Add(inputText);
+                        texts.Add(ConcatString(inputText));
                         break;
 
-                    case 2:
-                        inputText = checkStringLength();
-                        listOfValues.Add(inputText);
-                        texts.Add(concatString(inputText));
-                        break;
+                    // Date input
                     case 3:
-                        inputDate = checkDateValue();
+                        inputDate = ValidateDateTime();
                         listOfValues.Add(inputDate);
                         
+                        // Checking if its a leap year
                         if (DateTime.IsLeapYear(DateTime.ParseExact(inputDate, "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture).Year))
                         {
-                            dates.Add(inputDate + " - " + dateDifference(inputDate).ToString() + " !leap year");
-                        } else dates.Add(inputDate + " - " + dateDifference(inputDate).ToString());
+                            dates.Add(inputDate + " - " + DaysBetweenDates(inputDate).ToString() + " !leap year");
+                        } else dates.Add(inputDate + " - " + DaysBetweenDates(inputDate).ToString());
                         break;
+
+                    // Anything other then the listed options
                     default:
                         Console.WriteLine("Not a valid option!");
                         break;
                 }
             }
 
-            // Output
+            /*
+             * OUTPUT
+             */
+
             Console.Clear();
             Console.WriteLine("Numbers {0}", numbers.Count);
             foreach (string num in numbers)
@@ -91,17 +107,16 @@ namespace DeloitteConsoleApp
             {
                 Console.WriteLine(date);
             }
-            Console.WriteLine("Press enter to exit");
-            Console.ReadLine();
+            Console.WriteLine("\nPress any key to exit");
+            Console.ReadKey();
         }
 
-        // This method is called when the user tries to input a number
-        static int checkNumberValue() 
+        // Called when the user tries to input a number
+        static int ValidateNumber() 
         {
             int num = 0;
             bool repeat = true;
 
-            Console.Clear();
             Console.WriteLine("Number:");
 
             // This runs until the input number is valid
@@ -124,14 +139,12 @@ namespace DeloitteConsoleApp
             return num;
         }
 
-        // This method is called when the user tries to input a string
-        static string checkStringLength() 
+        // Called when the user tries to input a string
+        static string ValidateText() 
         {
             string inputString;
-            int lengthOfString;
             bool repeat = true;
 
-            Console.Clear();
             Console.WriteLine("Text:");
 
             // This runs until a valid text input is given
@@ -154,8 +167,8 @@ namespace DeloitteConsoleApp
             return inputString;
         }
 
-        // This method is called when the user tries to input a date
-        static string checkDateValue()
+        // Called when the user tries to input a date
+        static string ValidateDateTime()
         {
             string inputString;
             // Stores the string as a DateTime
@@ -163,7 +176,6 @@ namespace DeloitteConsoleApp
             DateTime minimumValue = new DateTime(2000, 1, 1);
             bool repeat = true;
 
-            Console.Clear();
             Console.WriteLine("Date:");
 
             do
@@ -186,19 +198,21 @@ namespace DeloitteConsoleApp
             return inputString;
         }
 
-        static int numberOperations(int num)
+        // Called to check if the number is even
+        static string NumberOperations(int num)
         {
-            // If the remainder is 0 then the number is divided by 2, otherwise its multiplied by 2
+            // If the remainder is 0 then the number is even and its divided by 2, otherwise its multiplied by 2
             if (num % 2 == 0)
             {
                 num /= 2;
             }
             else num *= 2;
 
-            return num;
+            return num.ToString();
         }
 
-        static bool checkIfNumberIsPrime(int num)
+        // Called to check if the number is prime
+        static bool NumberIsPrime(int num)
         {
             // 2 is the lowest prime number so return a false value if the num is lower
             if (num <= 1) return false;
@@ -206,7 +220,7 @@ namespace DeloitteConsoleApp
             // Even numbers are not primes
             if (num % 2 == 0) return false;
 
-            // the square root of num is stored for the loop
+            // the square root of num is stored for the loop (it's enough to check until this boundary)
             var boundary = (int)Math.Floor(Math.Sqrt(num));
 
             for (int i = 3; i <= boundary; i += 2)
@@ -217,7 +231,8 @@ namespace DeloitteConsoleApp
             return true;
         }
 
-        static string concatString(string text)
+        // Called to add the first few characters of our string to the input
+        static string ConcatString(string text)
         {
             string deloitteText = "Making an impact that matters - Deloitte";
 
@@ -225,7 +240,8 @@ namespace DeloitteConsoleApp
             return text;
         }
 
-        static int dateDifference(string date)
+        // Called to check the difference in days between the 2 dates
+        static int DaysBetweenDates(string date)
         {
             DateTime givenDate = new DateTime(2002, 2, 20);
             DateTime inputDate = DateTime.ParseExact(date, "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
