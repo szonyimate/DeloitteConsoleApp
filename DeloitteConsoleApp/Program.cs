@@ -8,8 +8,6 @@ namespace DeloitteConsoleApp
 
         static void Main(string[] args)
         {
-            // List for storing the input
-            List<String> listOfValues = new List<string>();
             // The current input line
             string inputLine;
 
@@ -21,11 +19,11 @@ namespace DeloitteConsoleApp
             List<String> dates = new List<string>();
 
             // 7 valid input required
-            while (listOfValues.Count < 7)
+            while ((numbers.Count + texts.Count + dates.Count) < 7)
             {
                 // Clear the console and wait for the remaining inputs
                 Console.Clear();
-                Console.WriteLine("{0} input required:\n", (7-listOfValues.Count));
+                Console.WriteLine("{0} input required:", 7 - (numbers.Count + texts.Count + dates.Count));
                 // Choose the next input type
                 Console.WriteLine("What is the next type? (Number - 1 / String - 2 / Datetime - 3)");
                 inputLine = Console.ReadLine();
@@ -47,8 +45,6 @@ namespace DeloitteConsoleApp
                     case 1:
                         // The return of ValidateNumber() method is the input string converted to int.
                         numValue = ValidateNumber();
-                        // The input is valid, so it can be added to the list
-                        listOfValues.Add(numValue.ToString());
                         
                         // Adds a string to the numbers list
                         if (isPrime = NumberIsPrime(numValue))
@@ -62,14 +58,12 @@ namespace DeloitteConsoleApp
                     case 2:
                         inputText = ValidateText();
                         // The input is valid, so it can be added to the list
-                        listOfValues.Add(inputText);
                         texts.Add(ConcatString(inputText));
                         break;
 
                     // Date input
                     case 3:
                         inputDate = ValidateDateTime();
-                        listOfValues.Add(inputDate);
                         
                         // Checking if its a leap year
                         if (DateTime.IsLeapYear(DateTime.ParseExact(inputDate, "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture).Year))
@@ -90,19 +84,19 @@ namespace DeloitteConsoleApp
              */
 
             Console.Clear();
-            Console.WriteLine("Numbers {0}", numbers.Count);
+            Console.WriteLine("Numbers ({0}):", numbers.Count);
             foreach (string num in numbers)
             {
                 Console.WriteLine(num);
             }
 
-            Console.WriteLine("\nTexts {0}", texts.Count);
+            Console.WriteLine("\nTexts ({0}):", texts.Count);
             foreach (string text in texts)
             {
                 Console.WriteLine(text);
             }
 
-            Console.WriteLine("\nDates {0}", dates.Count);
+            Console.WriteLine("\nDates ({0}):", dates.Count);
             foreach (string date in dates)
             {
                 Console.WriteLine(date);
@@ -117,7 +111,7 @@ namespace DeloitteConsoleApp
             int num = 0;
             bool repeat = true;
 
-            Console.WriteLine("Number:");
+            Console.WriteLine("\nNumber:");
 
             // This runs until the input number is valid
             do
@@ -145,7 +139,7 @@ namespace DeloitteConsoleApp
             string inputString;
             bool repeat = true;
 
-            Console.WriteLine("Text:");
+            Console.WriteLine("\nText:");
 
             // This runs until a valid text input is given
             do
@@ -176,7 +170,7 @@ namespace DeloitteConsoleApp
             DateTime minimumValue = new DateTime(2000, 1, 1);
             bool repeat = true;
 
-            Console.WriteLine("Date:");
+            Console.WriteLine("\nDate:");
 
             do
             {
